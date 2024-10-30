@@ -1,35 +1,47 @@
-from pathlib import Path 
+from pathlib import Path
 import argparse
 import re
 
+
 def lookingForFile(extension, directory):
+    files = []
     for file in Path(directory).rglob('*' + extension):
-        return file
+        files.append(file)
+    return files
 
-def lookingForContent(file, pattern=None):    
-    fileToRead = open(file, 'r')
-    content = fileToRead.read()
 
-    if pattern:
-        pattern = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b' + pattern
-    else:
-        pattern = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
-    
-    matches = re.findall(pattern,content)
-    for match in matches:
-        print(match)
-    fileToRead.close()
+def lookingForContent(files):
 
-def main(extension, directory, pattern=None):
+    patterns = [
+            r'\w+:\w+',
+            r'\d+'
+            # Add Here your pattern. Example: r'Here your pattern'
+    ]
+
+    for file in files:
+        fileToRead = open(file, 'r')
+        content = fileToRead.read()
+        for pattern in patterns:
+            matches = re.findall(pattern, content)
+            for match in matches:
+                print(match)
+        fileToRead.close()
+
+
+def main(extension, directory):
     file = lookingForFile(extension, directory)
-    lookingForContent(file, pattern)
+    lookingForContent(file)
+
 
 if __name__ == "__main__":
 
-    parser = argparse.ArgumentParser(description='Example: searcher.py <extension> <directory>')
+    parser = argparse.ArgumentParser(
+        usage="searcher.py <extension> <directory>",
+        description="If you need an additional pattern, just add it to the list"
+    )
+
     parser.add_argument('extension', help='Extension to search for')
     parser.add_argument('directory', help='Directory to search in')
-    parser.add_argument('-p', '--pattern', help='Additional pattern to search for')
     args = parser.parse_args()
 
-    main(args.extension, args.directory, args.pattern)
+    main(args.extension, args.directory)
