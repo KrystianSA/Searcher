@@ -13,8 +13,8 @@ def lookingForFile(extension, directory):
 def lookingForContent(files,nameOfOutputFile):
 
     patterns = [
-            r'\w+:\w+',
-            #r''
+            r'\w+:\w+', #pattern for username:password
+            #r'.{9,}'   #pattern for 9 or more characters
             # Add Here your pattern. Example: r'Here your pattern'
     ]
 
@@ -52,7 +52,7 @@ if __name__ == "__main__":
 
     parser.add_argument('-e','--extension', help='Extension to search for')
     parser.add_argument('-d','--directory', help='Directory to search in')
-    parser.add_argument('-o','--output', required=False, help='Name of output file')
+    parser.add_argument('-o','--output', required=False, help='Name and path of output file')
     args = parser.parse_args()
 
     main(args.extension, args.directory, args.output)
