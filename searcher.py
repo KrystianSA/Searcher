@@ -14,7 +14,7 @@ def lookingForContent(files,nameOfOutputFile):
 
     patterns = [
             r'\w+:\w+',
-            r'\d+'
+            #r''
             # Add Here your pattern. Example: r'Here your pattern'
     ]
 
