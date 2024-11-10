@@ -10,7 +10,7 @@ def lookingForFile(extension, directory):
     return files
 
 
-def lookingForContent(files):
+def lookingForContent(files,nameOfOutputFile):
 
     patterns = [
             r'\w+:\w+',
@@ -18,19 +18,29 @@ def lookingForContent(files):
             # Add Here your pattern. Example: r'Here your pattern'
     ]
 
+    dictionary = {}
     for file in files:
         fileToRead = open(file, 'r')
         content = fileToRead.read()
         for pattern in patterns:
             matches = re.findall(pattern, content)
             for match in matches:
-                print(match)
+                print(match," - ", file)
+                dictionary[match] = file
+
         fileToRead.close()
 
+    if args.output:
+        writeToFile(dictionary, nameOfOutputFile)
 
-def main(extension, directory):
+def writeToFile(dictionary, nameOfOutputFile):
+    with open(nameOfOutputFile,'w') as file :
+        for key, value in dictionary.items():
+            file.write(f"{key} - {value} \n")
+
+def main(extension, directory, nameOfOutputFile):
     file = lookingForFile(extension, directory)
-    lookingForContent(file)
+    lookingForContent(file, nameOfOutputFile)
 
 
 if __name__ == "__main__":
@@ -40,8 +50,9 @@ if __name__ == "__main__":
         description="If you need an additional pattern, just add it to the list"
     )
 
-    parser.add_argument('extension', help='Extension to search for')
-    parser.add_argument('directory', help='Directory to search in')
+    parser.add_argument('-e','--extension', help='Extension to search for')
+    parser.add_argument('-d','--directory', help='Directory to search in')
+    parser.add_argument('-o','--output', required=False, help='Name of output file')
     args = parser.parse_args()
 
-    main(args.extension, args.directory)
+    main(args.extension, args.directory, args.output)
